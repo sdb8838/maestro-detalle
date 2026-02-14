@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 interface Cliente {
   id: number;
@@ -27,9 +27,19 @@ interface Contrato {
   importe_con_iva: number;
 }
 
+// Tipos para ordenación
+type SortDirection = 'asc' | 'desc';
+interface SortConfig {
+  field: string;
+  direction: SortDirection;
+}
+
 export default function Home() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ field: '', direction: 'asc' });
+  const [contratoSortConfig, setContratoSortConfig] = useState<SortConfig>({ field: '', direction: 'asc' });
+  const [busqueda, setBusqueda] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarContratoForm, setMostrarContratoForm] = useState(false);
   const [editandoCliente, setEditandoCliente] = useState(false);
@@ -231,6 +241,115 @@ export default function Home() {
     }
   };
 
+  // Funciones de ordenación
+  const handleSort = (field: string) => {
+    setSortConfig(prev => ({
+      field,
+      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  const handleContratoSort = (field: string) => {
+    setContratoSortConfig(prev => ({
+      field,
+      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  // Clientes ordenados y filtrados
+  const clientesOrdenados = useMemo(() => {
+    let result = [...clientes];
+    
+    // Filtrar por búsqueda
+    if (busqueda.trim()) {
+      const term = busqueda.toLowerCase();
+      result = result.filter(c => 
+        c.nombre.toLowerCase().includes(term) ||
+        c.apellido.toLowerCase().includes(term) ||
+        c.dni.toLowerCase().includes(term) ||
+        c.telefono.includes(term)
+      );
+    }
+    
+    // Ordenar
+    if (sortConfig.field) {
+      result.sort((a, b) => {
+        const aVal = (a as any)[sortConfig.field];
+        const bVal = (b as any)[sortConfig.field];
+        const comparison = aVal?.toString().localeCompare(bVal?.toString()) || 0;
+        return sortConfig.direction === 'asc' ? comparison : -comparison;
+      });
+    }
+    
+    return result;
+  }, [clientes, sortConfig.field, sortConfig.direction, busqueda]);
+
+  // Contratos ordenados
+  const contratosOrdenados = useMemo(() => {
+    if (!clienteSeleccionado?.contratos) return [];
+    
+    let result = [...clienteSeleccionado.contratos];
+    
+    if (contratoSortConfig.field) {
+      result.sort((a, b) => {
+        let aVal: any = (a as any)[contratoSortConfig.field];
+        let bVal: any = (b as any)[contratoSortConfig.field];
+        
+        // Para campos numéricos
+        if (typeof aVal === 'number' && typeof bVal === 'number') {
+          const comparison = aVal - bVal;
+          return contratoSortConfig.direction === 'asc' ? comparison : -comparison;
+        }
+        
+        // Para campos de texto
+        const comparison = aVal?.toString().localeCompare(bVal?.toString()) || 0;
+        return contratoSortConfig.direction === 'asc' ? comparison : -comparison;
+      });
+    }
+    
+    return result;
+  }, [clienteSeleccionado, contratoSortConfig.field, contratoSortConfig.direction]);
+
+  // Componente de encabezado ordenable
+  const SortableHeader = ({ field, label, className = "" }: { field: string, label: string, className?: string }) => {
+    const isActive = sortConfig.field === field;
+    const direction = isActive ? sortConfig.direction : null;
+    
+    return (
+      <th 
+        className={`border p-2 text-left cursor-pointer hover:bg-gray-200 ${className}`}
+        onClick={() => handleSort(field)}
+      >
+        <div className="flex items-center gap-1">
+          {label}
+          {isActive && (
+            <span>{direction === 'asc' ? '↑' : '↓'}</span>
+          )}
+        </div>
+      </th>
+    );
+  };
+
+  // Componente de encabezado ordenable para contratos
+  const ContratoSortableHeader = ({ field, label, className = "" }: { field: string, label: string, className?: string }) => {
+    const isActive = contratoSortConfig.field === field;
+    const direction = isActive ? contratoSortConfig.direction : null;
+    
+    return (
+      <th 
+        className={`border p-2 text-left cursor-pointer hover:bg-gray-200 ${className}`}
+        onClick={() => handleContratoSort(field)}
+      >
+        <div className="flex items-center gap-1">
+          {label}
+          {isActive && (
+            <span>{direction === 'asc' ? '↑' : '↓'}</span>
+          )}
+        </div>
+      </th>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header estilo Ayuntamiento de Murcia */}
@@ -258,6 +377,37 @@ export default function Home() {
             </h2>
             <button onClick={() => setMostrarFormulario(true)} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition-colors text-sm font-medium">Nuevo Cliente</button>
           </div>
+          {/* Buscador */}
+          <div className="px-4 py-2 border-b">
+            <input 
+              type="text" 
+              placeholder="Buscar por nombre, DNI o teléfono..." 
+              className="w-full p-2 border rounded text-sm"
+              value={busqueda}
+              onChange={e => setBusqueda(e.target.value)}
+            />
+          </div>
+          {/* Encabezados ordenables */}
+          <div className="flex bg-gray-100 border-b px-2 py-1 text-xs font-semibold text-gray-600">
+            <div 
+              className="flex-1 cursor-pointer hover:bg-gray-200 px-1 py-1 rounded"
+              onClick={() => handleSort('apellido')}
+            >
+              Apellido {sortConfig.field === 'apellido' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </div>
+            <div 
+              className="flex-1 cursor-pointer hover:bg-gray-200 px-1 py-1 rounded"
+              onClick={() => handleSort('nombre')}
+            >
+              Nombre {sortConfig.field === 'nombre' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </div>
+            <div 
+              className="w-20 cursor-pointer hover:bg-gray-200 px-1 py-1 rounded text-center"
+              onClick={() => handleSort('dni')}
+            >
+              DNI {sortConfig.field === 'dni' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </div>
+          </div>
           {mostrarFormulario && (
             <form onSubmit={editandoCliente ? actualizarCliente : guardarCliente} className="mb-4 p-3 bg-gray-50 rounded border">
               {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
@@ -283,13 +433,16 @@ export default function Home() {
             </form>
           )}
           <div className="max-h-[70vh] overflow-y-auto">
-            {clientes.map(cliente => (
+            {clientesOrdenados.map(cliente => (
               <div key={cliente.id} onClick={() => seleccionarCliente(cliente)} className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${clienteSeleccionado?.id === cliente.id ? "bg-blue-100" : ""}`}>
                 <p className="font-medium">{cliente.apellido}, {cliente.nombre}</p>
                 <p className="text-sm text-gray-600">DNI: {cliente.dni}</p>
                 <p className="text-sm text-gray-600">{cliente.direccion_calle} {cliente.direccion_numero}, {cliente.direccion_localidad}</p>
               </div>
             ))}
+            {clientesOrdenados.length === 0 && (
+              <p className="p-4 text-center text-gray-500">No se encontraron clientes</p>
+            )}
           </div>
         </div>
 
@@ -336,16 +489,16 @@ export default function Home() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-100">
-                    <th className="border p-2 text-left">Código</th>
-                    <th className="border p-2 text-left">Año</th>
-                    <th className="border p-2 text-left">Denominación</th>
-                    <th className="border p-2 text-right">Sin IVA</th>
-                    <th className="border p-2 text-right">Con IVA</th>
-                    <th className="border p-2 text-center">Acción</th>
+                    <ContratoSortableHeader field="codigo_contrato" label="Código" className="w-24" />
+                    <ContratoSortableHeader field="anualidad" label="Año" className="w-20" />
+                    <ContratoSortableHeader field="denominacion" label="Denominación" className="flex-1" />
+                    <ContratoSortableHeader field="importe_sin_iva" label="Sin IVA" className="w-24" />
+                    <ContratoSortableHeader field="importe_con_iva" label="Con IVA" className="w-24" />
+                    <th className="border p-2 text-center w-24">Acción</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {clienteSeleccionado.contratos?.map(contrato => (
+                  {contratosOrdenados.map(contrato => (
                     <tr key={contrato.id} className="hover:bg-gray-50">
                       <td className="border p-2">{contrato.codigo_contrato}</td>
                       <td className="border p-2">{contrato.anualidad}</td>
