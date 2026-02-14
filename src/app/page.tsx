@@ -237,14 +237,10 @@ export default function Home() {
       <header className="bg-gradient-to-r from-red-700 to-red-800 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <div className="bg-white/10 p-2 rounded-lg">
-              <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 10 12 6.16-1.26 10-6.45 10-12V7l-10-5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.2v3.5c0 .7-.5 1.3-1.2 1.3H9.2c-.7 0-1.2-.6-1.2-1.2v-3.5c0-.7.5-1.3 1.2-1.3V9.5C9.2 9.1 10.6 8 12 8zm0 1.5c-.8 0-1.3.5-1.3 1v1.5h2.6V9.5c0-.5-.5-1-1.3-1z"/>
-              </svg>
-            </div>
+            <img src="/logo_ayto.svg" alt="Ayuntamiento de Murcia" className="h-16 w-auto" />
             <div>
               <h1 className="text-2xl font-bold tracking-wide">Gestión de Clientes y Contratos</h1>
-              <p className="text-red-200 text-sm">Administración Municipal</p>
+              <p className="text-red-200 text-sm">Servicio de Informática</p>
             </div>
           </div>
         </div>
