@@ -313,7 +313,7 @@ export default function Home() {
               <hr className="my-4" />
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Contratos</h3>
-                <button onClick={() => setMostrarContratoForm(true)} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Nuevo Contrato</button>
+                <button onClick={() => { setContratoForm({ codigo_contrato: "", anualidad: new Date().getFullYear(), denominacion: "", importe_sin_iva: 0 }); setEditandoContrato(null); setMostrarContratoForm(true); }} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Nuevo Contrato</button>
               </div>
               {mostrarContratoForm && (
                 <form onSubmit={editandoContrato ? actualizarContrato : guardarContrato} className="mb-4 p-3 bg-gray-50 rounded border">
