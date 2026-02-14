@@ -232,14 +232,35 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">Gestión de Clientes y Contratos</h1>
-      <div className="flex gap-4 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-100">
+      {/* Header estilo Ayuntamiento de Murcia */}
+      <header className="bg-gradient-to-r from-red-700 to-red-800 text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            <div className="bg-white/10 p-2 rounded-lg">
+              <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 10 12 6.16-1.26 10-6.45 10-12V7l-10-5zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.2v3.5c0 .7-.5 1.3-1.2 1.3H9.2c-.7 0-1.2-.6-1.2-1.2v-3.5c0-.7.5-1.3 1.2-1.3V9.5C9.2 9.1 10.6 8 12 8zm0 1.5c-.8 0-1.3.5-1.3 1v1.5h2.6V9.5c0-.5-.5-1-1.3-1z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-wide">Gestión de Clientes y Contratos</h1>
+              <p className="text-red-200 text-sm">Administración Municipal</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex gap-4 max-w-7xl mx-auto p-4">
         {/* Maestro - Lista de Clientes */}
-        <div className="w-1/3 bg-white rounded-lg shadow p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Clientes</h2>
-            <button onClick={() => setMostrarFormulario(true)} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Nuevo</button>
+        <div className="w-1/3 bg-white rounded-lg shadow-md border-t-4 border-red-700">
+          <div className="bg-gray-50 px-4 py-3 border-b flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+              <svg className="w-5 h-5 text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+              Clientes
+            </h2>
+            <button onClick={() => setMostrarFormulario(true)} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition-colors text-sm font-medium">Nuevo Cliente</button>
           </div>
           {mostrarFormulario && (
             <form onSubmit={editandoCliente ? actualizarCliente : guardarCliente} className="mb-4 p-3 bg-gray-50 rounded border">
@@ -277,7 +298,7 @@ export default function Home() {
         </div>
 
         {/* Detalle - Contratos del Cliente */}
-        <div className="w-2/3 bg-white rounded-lg shadow p-4">
+        <div className="w-2/3 bg-white rounded-lg shadow-md border-t-4 border-red-700">
           {clienteSeleccionado ? (
             <>
               <div className="mb-4">
