@@ -353,7 +353,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header estilo Ayuntamiento de Murcia */}
-      <header className="bg-gradient-to-r from-red-700 to-red-800 text-white shadow-lg">
+      <header className="bg-gradient-to-r from-red-700 to-red-800 text-white shadow-lg animate-fade-in">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <img src="/logo_ayto.svg" alt="Ayuntamiento de Murcia" className="h-16 w-auto" />
@@ -367,7 +367,7 @@ export default function Home() {
 
       <div className="flex gap-4 max-w-7xl mx-auto p-4">
         {/* Maestro - Lista de Clientes */}
-        <div className="w-1/3 bg-white rounded-lg shadow-md border-t-4 border-red-700">
+        <div className="w-1/3 bg-white rounded-lg shadow-md border-t-4 border-red-700 animate-slide-in hover-lift transition-all-smooth">
           <div className="bg-gray-50 px-4 py-3 border-b flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
               <svg className="w-5 h-5 text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -375,7 +375,7 @@ export default function Home() {
               </svg>
               Clientes
             </h2>
-            <button onClick={() => setMostrarFormulario(true)} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 transition-colors text-sm font-medium">Nuevo Cliente</button>
+            <button onClick={() => setMostrarFormulario(true)} className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 hover-scale transition-all-smooth text-sm font-medium">Nuevo Cliente</button>
           </div>
           {/* Buscador */}
           <div className="px-4 py-2 border-b">
@@ -409,7 +409,7 @@ export default function Home() {
             </div>
           </div>
           {mostrarFormulario && (
-            <form onSubmit={editandoCliente ? actualizarCliente : guardarCliente} className="mb-4 p-3 bg-gray-50 rounded border">
+            <form onSubmit={editandoCliente ? actualizarCliente : guardarCliente} className="mb-4 p-3 bg-gray-50 rounded border form-animate">
               {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
               <input placeholder="Nombre" required className="w-full mb-2 p-2 border rounded" value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})} />
               <input placeholder="Apellido" required className="w-full mb-2 p-2 border rounded" value={formData.apellido} onChange={e => setFormData({...formData, apellido: e.target.value})} />
@@ -433,8 +433,8 @@ export default function Home() {
             </form>
           )}
           <div className="max-h-[70vh] overflow-y-auto">
-            {clientesOrdenados.map(cliente => (
-              <div key={cliente.id} onClick={() => seleccionarCliente(cliente)} className={`p-3 border-b cursor-pointer hover:bg-gray-50 ${clienteSeleccionado?.id === cliente.id ? "bg-blue-100" : ""}`}>
+            {clientesOrdenados.map((cliente, index) => (
+              <div key={cliente.id} onClick={() => seleccionarCliente(cliente)} className={`p-3 border-b cursor-pointer hover:bg-gray-50 list-item ${clienteSeleccionado?.id === cliente.id ? "cliente-seleccionado" : ""}`} style={{ animationDelay: `${index * 30}ms` }}>
                 <p className="font-medium">{cliente.apellido}, {cliente.nombre}</p>
                 <p className="text-sm text-gray-600">DNI: {cliente.dni}</p>
                 <p className="text-sm text-gray-600">{cliente.direccion_calle} {cliente.direccion_numero}, {cliente.direccion_localidad}</p>
@@ -447,7 +447,7 @@ export default function Home() {
         </div>
 
         {/* Detalle - Contratos del Cliente */}
-        <div className="w-2/3 bg-white rounded-lg shadow-md border-t-4 border-red-700">
+        <div className="w-2/3 bg-white rounded-lg shadow-md border-t-4 border-red-700 animate-slide-in hover-lift transition-all-smooth" style={{ animationDelay: '0.1s' }}>
           {clienteSeleccionado ? (
             <>
               <div className="mb-4">
@@ -458,18 +458,18 @@ export default function Home() {
                     <p className="text-gray-600">{clienteSeleccionado.direccion_calle} {clienteSeleccionado.direccion_numero}, {clienteSeleccionado.direccion_piso}{clienteSeleccionado.direccion_puerta} - {clienteSeleccionado.direccion_cp} {clienteSeleccionado.direccion_localidad}, {clienteSeleccionado.direccion_provincia}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={iniciarEdicionCliente} className="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700">Editar</button>
-                    <button onClick={() => eliminarCliente(clienteSeleccionado.id)} className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Eliminar</button>
+                    <button onClick={iniciarEdicionCliente} className="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700 hover-scale transition-all-smooth">Editar</button>
+                    <button onClick={() => eliminarCliente(clienteSeleccionado.id)} className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 hover-scale transition-all-smooth">Eliminar</button>
                   </div>
                 </div>
               </div>
               <hr className="my-4" />
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Contratos</h3>
-                <button onClick={() => { setContratoForm({ codigo_contrato: "", anualidad: new Date().getFullYear(), denominacion: "", importe_sin_iva: 0 }); setEditandoContrato(null); setMostrarContratoForm(true); }} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Nuevo Contrato</button>
+                <button onClick={() => { setContratoForm({ codigo_contrato: "", anualidad: new Date().getFullYear(), denominacion: "", importe_sin_iva: 0 }); setEditandoContrato(null); setMostrarContratoForm(true); }} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 hover-scale transition-all-smooth">Nuevo Contrato</button>
               </div>
               {mostrarContratoForm && (
-                <form onSubmit={editandoContrato ? actualizarContrato : guardarContrato} className="mb-4 p-3 bg-gray-50 rounded border">
+                <form onSubmit={editandoContrato ? actualizarContrato : guardarContrato} className="mb-4 p-3 bg-gray-50 rounded border form-animate">
                   {contratoError && <p className="text-red-500 text-sm mb-2">{contratoError}</p>}
                   <div className="flex gap-2 mb-2">
                     <input placeholder="Código Contrato" required className="flex-1 p-2 border rounded" value={contratoForm.codigo_contrato} onChange={e => setContratoForm({...contratoForm, codigo_contrato: e.target.value})} />
@@ -481,8 +481,8 @@ export default function Home() {
                     <span className="flex items-center bg-gray-200 px-3 rounded">+ IVA 21% = €{(contratoForm.importe_sin_iva * 1.21).toFixed(2)}</span>
                   </div>
                   <div className="flex gap-2">
-                    <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700">{editandoContrato ? "Actualizar" : "Guardar"}</button>
-                    <button type="button" onClick={() => { setMostrarContratoForm(false); setEditandoContrato(null); }} className="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600">Cancelar</button>
+                    <button type="submit" className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 hover-scale transition-all-smooth">{editandoContrato ? "Actualizar" : "Guardar"}</button>
+                    <button type="button" onClick={() => { setMostrarContratoForm(false); setEditandoContrato(null); }} className="flex-1 bg-gray-500 text-white py-2 rounded hover:bg-gray-600 hover-scale transition-all-smooth">Cancelar</button>
                   </div>
                 </form>
               )}
@@ -498,16 +498,16 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {contratosOrdenados.map(contrato => (
-                    <tr key={contrato.id} className="hover:bg-gray-50">
+                  {contratosOrdenados.map((contrato, index) => (
+                    <tr key={contrato.id} className="hover:bg-gray-50 table-row-animate" style={{ animationDelay: `${index * 50}ms` }}>
                       <td className="border p-2">{contrato.codigo_contrato}</td>
                       <td className="border p-2">{contrato.anualidad}</td>
                       <td className="border p-2">{contrato.denominacion}</td>
                       <td className="border p-2 text-right">€{contrato.importe_sin_iva.toFixed(2)}</td>
                       <td className="border p-2 text-right font-medium">€{contrato.importe_con_iva.toFixed(2)}</td>
                       <td className="border p-2 text-center">
-                        <button onClick={() => iniciarEdicionContrato(contrato)} className="text-yellow-600 hover:text-yellow-800 mr-2">Editar</button>
-                        <button onClick={() => eliminarContrato(contrato.id)} className="text-red-600 hover:text-red-800">Eliminar</button>
+                        <button onClick={() => iniciarEdicionContrato(contrato)} className="text-yellow-600 hover:text-yellow-800 hover-scale transition-all-smooth mr-2">Editar</button>
+                        <button onClick={() => eliminarContrato(contrato.id)} className="text-red-600 hover:text-red-800 hover-scale transition-all-smooth">Eliminar</button>
                       </td>
                     </tr>
                   ))}
